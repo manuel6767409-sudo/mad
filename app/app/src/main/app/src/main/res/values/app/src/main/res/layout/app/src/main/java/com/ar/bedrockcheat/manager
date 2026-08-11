@@ -1,0 +1,21 @@
+package com.ar.bedrockcheat.manager;
+
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.util.concurrent.Executors;
+
+public class ServerManager {
+    public interface PingCallback {
+        void onResult(boolean reachable);
+    }
+    public void ping(String ip, int port, PingCallback cb) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try (Socket s = new Socket()) {
+                s.connect(new InetSocketAddress(ip, port), 3000);
+                cb.onResult(true);
+            } catch (Exception e) {
+                cb.onResult(false);
+            }
+        });
+    }
+}
